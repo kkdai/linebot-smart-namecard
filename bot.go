@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/line/line-bot-sdk-go/v7/linebot"
 	"github.com/line/line-bot-sdk-go/v8/linebot/messaging_api"
@@ -78,6 +80,28 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					ret = "無法辨識影片內容文字，請重新輸入:" + err.Error()
 				}
 
+				log.Println("Got GeminiImage ret:", ret)
+
+				jsonData := extractJSONFromString(ret)
+				log.Println("Got jsonData:", jsonData)
+				// Parse json and insert NotionDB
+
+				var person Person
+				err = json.Unmarshal([]byte(jsonData), &person)
+				if err != nil {
+					log.Println("Error parsing JSON:", err)
+				}
+
+				nDB := &NotionDB{
+					DatabaseID: os.Getenv("NOTION_DB_PAGEID"),
+					Token:      os.Getenv("NOTION_INTEGRATION_TOKEN"),
+				}
+
+				err = nDB.AddPageToDatabase(person.Name, person.Title, person.Address, person.Email, person.PhoneNumber)
+				if err != nil {
+					log.Println("Error adding page to database:", err)
+				}
+
 				// Determine the push msg target.
 				if _, err := bot.ReplyMessage(
 					&messaging_api.ReplyMessageRequest{
@@ -85,6 +109,9 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						Messages: []messaging_api.MessageInterface{
 							&messaging_api.TextMessage{
 								Text: ret,
+							},
+							&messaging_api.TextMessage{
+								Text: jsonData,
 							},
 						},
 					},
@@ -147,4 +174,15 @@ func GetImageBinary(blob *messaging_api.MessagingApiBlobAPI, messageID string) (
 	}
 
 	return data, nil
+}
+
+// extractJSONFromString takes a string that contains JSON with Markdown backticks and returns just the JSON string.
+func extractJSONFromString(s string) string {
+	// Trim the leading and trailing backticks.
+	s = strings.Trim(s, "`")
+
+	// Trim leading and trailing whitespace that may be present after removing backticks.
+	s = strings.TrimSpace(s)
+
+	return s
 }

@@ -65,6 +65,8 @@ github.com/googleapis/enterprise-certificate-proxy v0.3.2 h1:Vie5ybvEvT75RniqhfF
 github.com/googleapis/enterprise-certificate-proxy v0.3.2/go.mod h1:VLSiSSBs/ksPL8kq3OBOQ6WRI2QnaFynd1DCjZ62+V0=
 github.com/googleapis/gax-go/v2 v2.12.0 h1:A+gCJKdRfqXkr+BIRGtZLibNXf0m1f9E4HG56etFpas=
 github.com/googleapis/gax-go/v2 v2.12.0/go.mod h1:y+aIqrI5eb1YGMVJfuV3185Ts/D7qKpsEkdD5+I6QGU=
+github.com/jomei/notionapi v1.12.9 h1:ecqBJ7CMS4OrXKjdwEpfpn6+xu+DsUKqfulFwKAi2eE=
+github.com/jomei/notionapi v1.12.9/go.mod h1:BqzP6JBddpBnXvMSIxiR5dCoCjKngmz5QNl1ONDlDoM=
 github.com/line/line-bot-sdk-go/v7 v7.21.0 h1:eeYMuAwaDV5DZNTRqDipNhzjT51HwEcM1PRPG+cqh4Y=
 github.com/line/line-bot-sdk-go/v7 v7.21.0/go.mod h1:idpoxOZgtSd8JyhctMMpwg5LNgRAIL/QIxa5S0DXcMg=
 github.com/line/line-bot-sdk-go/v8 v8.2.0 h1:IFqwd3pKbA+o3pwV3nzamtWHt7n+ijSH3t/D8Q/vVQ0=

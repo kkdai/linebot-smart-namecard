@@ -24,6 +24,7 @@ import (
 var bucketName string
 var geminiKey string
 var channelToken string
+var ChannelSecret string
 
 var bot *messaging_api.MessagingApiAPI
 var blob *messaging_api.MessagingApiBlobAPI
@@ -32,6 +33,7 @@ func main() {
 	var err error
 	geminiKey = os.Getenv("GOOGLE_GEMINI_API_KEY")
 	channelToken = os.Getenv("ChannelAccessToken")
+	ChannelSecret = os.Getenv("ChannelSecret")
 
 	bot, err = messaging_api.NewMessagingApiAPI(channelToken)
 	if err != nil {

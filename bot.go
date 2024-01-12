@@ -34,9 +34,11 @@ func replyText(replyToken, text string) error {
 // callbackHandler: Handle callback from LINE server.
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	card_prompt := os.Getenv("CARD_PROMPT")
-	channelToken = os.Getenv("ChannelAccessToken")
+	if card_prompt == "" {
+		card_prompt = ImagePrompt
+	}
 
-	cb, err := webhook.ParseRequest(os.Getenv("ChannelSecret"), r)
+	cb, err := webhook.ParseRequest(ChannelSecret, r)
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
 			w.WriteHeader(400)

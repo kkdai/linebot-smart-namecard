@@ -1,0 +1,43 @@
+{
+  "name": "linebot-smart-namecard",
+  "description": "LINEBot for Smart Namecard",
+  "repository": "https://github.com/kkdai/linebot-smart-namecard",
+  "keywords": [
+    "Line",
+    "go",
+    "static"
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/kr/heroku-buildpack-go.git"
+    },
+    {
+      "url": "heroku/go"
+    },
+    {
+      "url": "https://github.com/gerywahyunugraha/heroku-google-application-credentials-buildpack"
+    }
+  ],
+  "env": {
+    "ChannelAccessToken": {
+      "description": "LINE OA Channel Access Token",
+      "required": true
+    },
+    "ChannelSecret": {
+      "description": "LINE OA Channel Secret",
+      "required": true
+    },
+    "GOOGLE_GEMINI_API_KEY": {
+      "description": "Get from https://makersuite.google.com/app/apikey",
+      "required": true
+    },
+    "NOTION_INTEGRATION_TOKEN": {
+      "description": "Notion integration token",
+      "required": true
+    },
+    "NOTION_DB_PAGEID": {
+      "description": "Notion database page id",
+      "required": true
+    }
+  }
+}

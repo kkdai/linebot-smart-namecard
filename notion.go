@@ -23,6 +23,72 @@ type NotionDBEntry struct {
 	ImgURL      string
 }
 
+// QueryDatabaseByTitleAndName 根據提供的標題和名稱查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseByTitleAndName(name string) ([]NotionDBEntry, error) {
+	client := notionapi.NewClient(notionapi.Token(n.Token))
+
+	// 建立查詢過濾條件
+	filter := &notionapi.DatabaseQueryRequest{
+		Filter: &notionapi.PropertyFilter{
+			Property: "Name",
+			// Replace Text with the correct field based on the notionapi package's documentation or source code
+			RichText: &notionapi.TextFilterCondition{
+				Equals: name,
+			},
+		},
+	}
+
+	// 調用 Notion API 來查詢資料庫
+	result, err := client.Database.Query(context.Background(), notionapi.DatabaseID(n.DatabaseID), filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var entries []NotionDBEntry
+
+	for _, page := range result.Results {
+		entry := NotionDBEntry{}
+
+		if prop, ok := page.Properties["Name"].(*notionapi.TitleProperty); ok && len(prop.Title) > 0 {
+			entry.Name = prop.Title[0].PlainText
+		}
+
+		if prop, ok := page.Properties["Title"].(*notionapi.RichTextProperty); ok && len(prop.RichText) > 0 {
+			entry.Title = prop.RichText[0].PlainText
+		}
+
+		if prop, ok := page.Properties["Address"].(*notionapi.RichTextProperty); ok && len(prop.RichText) > 0 {
+			entry.Address = prop.RichText[0].PlainText
+		}
+
+		if prop, ok := page.Properties["Email"].(*notionapi.EmailProperty); ok {
+			entry.Email = prop.Email
+		}
+
+		if prop, ok := page.Properties["Phone Number"].(*notionapi.PhoneNumberProperty); ok {
+			entry.PhoneNumber = prop.PhoneNumber
+		}
+
+		if tagsProp, ok := page.Properties["Tags"].(*notionapi.MultiSelectProperty); ok {
+			for _, tag := range tagsProp.MultiSelect {
+				entry.Tags = append(entry.Tags, tag.Name)
+			}
+		}
+
+		if imgProp, ok := page.Properties["Img"].(*notionapi.FilesProperty); ok {
+			for _, file := range imgProp.Files {
+				if file.Type == "external" {
+					entry.ImgURL = file.External.URL
+					break
+				}
+			}
+		}
+
+		entries = append(entries, entry)
+	}
+	return entries, nil
+}
+
 // AddPageToDatabase adds a new page with the provided field values to the specified Notion database.
 func (n *NotionDB) AddPageToDatabase(name string, title string, address string, email string, phoneNumber string, tags []string, imgURL string) {
 	client := notionapi.NewClient(notionapi.Token(n.Token))

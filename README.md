@@ -4,7 +4,13 @@ LINE Bot 使用 Google Gemini Pro 來做的名片小幫手
 
  [![GoDoc](https://godoc.org/github.com/kkdai/linebot-gemini-pro.svg?status.svg)](https://godoc.org/github.com/kkdai/LineBotTemplate)   ![Go](https://github.com/kkdai/linebot-gemini-pro/workflows/Go/badge.svg) [![goreportcard.com](https://goreportcard.com/badge/github.com/kkdai/linebot-gemini-pro)](https://goreportcard.com/report/github.com/kkdai/linebot-gemini-pro)
 
-# LINE Bot Screen
+### LINE Bot Screen
+
+![](img/screenshop.png)
+
+### Notion DB image
+
+![](img/DB_img.png)
 
 ## 如何快速架設在自己平台
 
@@ -23,7 +29,7 @@ LINE Bot 使用 Google Gemini Pro 來做的名片小幫手
 
 1. 請先到程式碼:  [https://github.com/kkdai/linebot-gemini-pro]( https://github.com/kkdai/linebot-gemini-pro)
 
-2. 部署到雲服務平台 (三個擇一即可）：
+2. 部署到雲服務平台：
 
    2.1.  按下： [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)  來部署到你的 Heroku 帳號
 
@@ -47,8 +53,7 @@ LINE Bot 使用 Google Gemini Pro 來做的名片小幫手
 
 ### 如何使用
 
-- 打開聊天機器人
-  - **傳送圖片：** 直接辨識圖片內容，目前的想法是透過比較科學化的角度來說明。
+- **傳送名片照片：** 會自動透過 Gemini Pro 辨識之後，將結果上傳到 Notion DB.
 
 ### 完整開發教學
 

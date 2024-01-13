@@ -14,7 +14,7 @@ import (
 )
 
 // Const variables of Prompts.
-const ImagePrompt = "這是一張名片，你是一個名片秘書。請將以下資訊整理成 json 給我 Name, Title, Address, Email, Phone Number"
+const ImagePrompt = "這是一張名片，你是一個名片秘書。請將以下資訊整理成 json 給我。 只好 json 就好:  Name, Title, Address, Email, Phone Number "
 
 // replyText: Reply text message to LINE server.
 func replyText(replyToken, text string) error {

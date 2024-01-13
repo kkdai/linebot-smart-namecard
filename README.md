@@ -33,6 +33,9 @@ LINE Bot 使用 Google Gemini Pro 來做的名片小幫手
 
    2.1.  按下： [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)  來部署到你的 Heroku 帳號
 
+   2.2  按下： [![Deploy to Render](http://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+ 來部署到你的 Render 帳號
+
 3. 除了填寫 App Name 以外，以下的參數必須要填入才能完整運行。
 
    1. **ChannelAccessToken**: 請到 LINE Developers Console issue 一個。

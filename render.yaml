@@ -13,3 +13,7 @@ services:
     sync: false
   - key: GOOGLE_GEMINI_API_KEY
     sync: false
+  - key: NOTION_INTEGRATION_TOKEN
+    sync: false
+  - key: NOTION_DB_PAGEID
+    sync: false

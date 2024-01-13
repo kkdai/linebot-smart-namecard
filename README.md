@@ -41,6 +41,11 @@ LINE Bot 使用 Google Gemini Pro 來做的名片小幫手
    1. **ChannelAccessToken**: 請到 LINE Developers Console issue 一個。
    2. **ChannelSecret**: 請到 LINE Developers Console 拿一個。
    3. **GOOGLE_GEMINI_API_KEY**: 必需要透過 [Google Gemini API Keys](https://makersuite.google.com/app/apikey) 來取得。
+   4. **NOTION_INTEGRATION_TOKEN**: 取得 Notion Integration Token，請參考[官方文件(https://developers.notion.com/docs/create-a-notion-integration)]。 記得要讓 [Notion 頁面取得 Integration 權限](https://developers.notion.com/docs/create-a-notion-integration#give-your-integration-page-permissions) ，參考以下圖片。
+   ![](https://files.readme.io/fefc809-permissions.gif)
+
+   5. **NOTION_DB_PAGEID**: Notion DB 的頁面網址應該是 `https://www.notion.so/b764xxxxxa?v=dexxxx1` 那麼 `b764xxxxxa`就是你的 DatabasePageId。
+
 4. 請到 LINE 官方帳號的平台，到了右上角的「設定」中，選擇「帳號設定」
    1. 將你官方帳號基本資料設定好，並且打開加入群組功能。
       1. ![image-20220421103018014](http://www.evanlin.com/images/2021/image-20220421103018014.png)

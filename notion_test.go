@@ -20,12 +20,18 @@ func TestQueryNotionDB(t *testing.T) {
 		Token:      token,
 	}
 
-	entries, err := db.QueryDatabaseByTitleAndName("22")
+	entries, err := db.QueryDatabaseByName("111")
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("%+v\n", entries)
+
+	entries, err = db.QueryDatabaseByEmail("222@333.44")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	fmt.Printf("%+v", entries)
+	fmt.Printf("%+v\n", entries)
 }
 
 func TestAddNotionDB(t *testing.T) {

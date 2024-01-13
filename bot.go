@@ -67,8 +67,6 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			// Handle only image message
 			case webhook.ImageMessageContent:
 				log.Println("Got img msg ID:", message.Id)
-				var resultMSg string
-
 				//Get image binary from LINE server based on message ID.
 				data, err := GetImageBinary(blob, message.Id)
 				if err != nil {
@@ -106,23 +104,21 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				// Check email first before adding to database.
 				dbUser, err := nDB.QueryDatabaseByEmail(person.Email)
-				if err == nil || len(dbUser) > 0 {
-					log.Println("Already exist in DB", dbUser[0])
-					resultMSg = "已經存在於資料庫中，請勿重複輸入"
-				}
-
-				if resultMSg == "" {
-					if err := replyText(e.ReplyToken, resultMSg+"\n"+jsonData); err != nil {
+				if err == nil && len(dbUser) > 0 {
+					log.Println("Already exist in DB", dbUser)
+					if err := replyText(e.ReplyToken, "已經存在於資料庫中，請勿重複輸入"+"\n"+jsonData); err != nil {
 						log.Print(err)
 					}
 					continue
 				}
 
+				// Add namecard to notion database.
 				err = nDB.AddPageToDatabase(person.Name, person.Title, person.Address, person.Email, person.PhoneNumber)
 				if err != nil {
 					log.Println("Error adding page to database:", err)
 				}
 
+				// Completed, reply final result to user.
 				if err := replyText(e.ReplyToken, jsonData+"\n"+"新增到資料庫"); err != nil {
 					log.Print(err)
 				}

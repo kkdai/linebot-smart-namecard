@@ -67,6 +67,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			// Handle only image message
 			case webhook.ImageMessageContent:
 				log.Println("Got img msg ID:", message.Id)
+				var resultMSg string
 
 				//Get image binary from LINE server based on message ID.
 				data, err := GetImageBinary(blob, message.Id)
@@ -75,9 +76,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					continue
 				}
 
+				// Chat with Image
 				ret, err := GeminiImage(data, card_prompt)
 				if err != nil {
 					ret = "無法辨識影片內容文字，請重新輸入:" + err.Error()
+					if err := replyText(e.ReplyToken, ret); err != nil {
+						log.Print(err)
+					}
+					continue
 				}
 
 				log.Println("Got GeminiImage ret:", ret)
@@ -98,25 +104,26 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					Token:      os.Getenv("NOTION_INTEGRATION_TOKEN"),
 				}
 
+				// Check email first before adding to database.
+				dbUser, err := nDB.QueryDatabaseByEmail(person.Email)
+				if err == nil || len(dbUser) > 0 {
+					log.Println("Already exist in DB", dbUser[0])
+					resultMSg = "已經存在於資料庫中，請勿重複輸入"
+				}
+
+				if resultMSg == "" {
+					if err := replyText(e.ReplyToken, resultMSg+"\n"+jsonData); err != nil {
+						log.Print(err)
+					}
+					continue
+				}
+
 				err = nDB.AddPageToDatabase(person.Name, person.Title, person.Address, person.Email, person.PhoneNumber)
 				if err != nil {
 					log.Println("Error adding page to database:", err)
 				}
 
-				// Determine the push msg target.
-				if _, err := bot.ReplyMessage(
-					&messaging_api.ReplyMessageRequest{
-						ReplyToken: e.ReplyToken,
-						Messages: []messaging_api.MessageInterface{
-							&messaging_api.TextMessage{
-								Text: ret,
-							},
-							&messaging_api.TextMessage{
-								Text: jsonData,
-							},
-						},
-					},
-				); err != nil {
+				if err := replyText(e.ReplyToken, jsonData+"\n"+"新增到資料庫"); err != nil {
 					log.Print(err)
 				}
 
@@ -175,17 +182,6 @@ func GetImageBinary(blob *messaging_api.MessagingApiBlobAPI, messageID string) (
 	}
 
 	return data, nil
-}
-
-// extractJSONFromString takes a string that contains JSON with Markdown backticks and returns just the JSON string.
-func extractJSONFromString(s string) string {
-	// Trim the leading and trailing backticks.
-	s = strings.Trim(s, "`")
-
-	// Trim leading and trailing whitespace that may be present after removing backticks.
-	s = strings.TrimSpace(s)
-
-	return s
 }
 
 // removeFirstAndLastLine takes a string and removes the first and last lines.

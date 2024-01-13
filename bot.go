@@ -82,10 +82,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				log.Println("Got GeminiImage ret:", ret)
 
-				jsonData := extractJSONFromString(ret)
+				// Remove first and last line,	which are the backticks.
+				jsonData := removeFirstAndLastLine(ret)
 				log.Println("Got jsonData:", jsonData)
-				// Parse json and insert NotionDB
 
+				// Parse json and insert NotionDB
 				var person Person
 				err = json.Unmarshal([]byte(jsonData), &person)
 				if err != nil {
@@ -185,4 +186,18 @@ func extractJSONFromString(s string) string {
 	s = strings.TrimSpace(s)
 
 	return s
+}
+
+// removeFirstAndLastLine takes a string and removes the first and last lines.
+func removeFirstAndLastLine(s string) string {
+	// Split the string into lines.
+	lines := strings.Split(s, "\n")
+
+	// If there are less than 3 lines, return an empty string because removing the first and last would leave nothing.
+	if len(lines) < 3 {
+		return ""
+	}
+
+	// Join the lines back together, skipping the first and last lines.
+	return strings.Join(lines[1:len(lines)-1], "\n")
 }

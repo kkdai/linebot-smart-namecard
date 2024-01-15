@@ -70,33 +70,6 @@ func (n *NotionDB) QueryDatabase(UId, property, value string) ([]NotionDBEntry, 
 	return entries, nil
 }
 
-// createEntryFromPage creates a NotionDBEntry from a page.
-func (n *NotionDB) createEntryFromPage(page *notionapi.Page) NotionDBEntry {
-	entry := NotionDBEntry{}
-
-	entry.Name = n.getPropertyValue(page, "Name")
-	entry.Title = n.getPropertyValue(page, "Title")
-	entry.Address = n.getPropertyValue(page, "Address")
-	entry.Email = n.getPropertyValue(page, "Email")
-	entry.PhoneNumber = n.getPropertyValue(page, "Phone Number")
-
-	return entry
-}
-
-// getPropertyValue gets the plain text value of a property from a page.
-func (n *NotionDB) getPropertyValue(page *notionapi.Page, property string) string {
-	if prop, ok := page.Properties[property].(*notionapi.RichTextProperty); ok && len(prop.RichText) > 0 {
-		return prop.RichText[0].PlainText
-	}
-
-	return ""
-}
-
-// QueryDatabaseByName 根據提供的名稱和UId查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabaseByName(name, UId string) ([]NotionDBEntry, error) {
-	return n.QueryDatabase(UId, "Name", name)
-}
-
 // QueryDatabaseByEmail 根據提供的電子郵件地址和UId查詢 Notion 資料庫。
 func (n *NotionDB) QueryDatabaseByEmail(email, UId string) ([]NotionDBEntry, error) {
 	return n.QueryDatabase(UId, "Email", email)
@@ -177,59 +150,29 @@ func (n *NotionDB) AddPageToDatabase(Uid string, name string, title string, addr
 	return nil
 }
 
-// RetrieveDatabaseContents 從指定的 Notion 資料庫檢索內容並返回結構體切片。
-func (n *NotionDB) RetrieveDatabaseContents() ([]NotionDBEntry, error) {
-	client := notionapi.NewClient(notionapi.Token(n.Token))
+// createEntryFromPage creates a NotionDBEntry from a page.
+func (n *NotionDB) createEntryFromPage(page *notionapi.Page) NotionDBEntry {
+	entry := NotionDBEntry{}
 
-	// 讀取 Notion 資料庫中的頁面
-	query := &notionapi.DatabaseQueryRequest{}
-	result, err := client.Database.Query(context.Background(), notionapi.DatabaseID(n.DatabaseID), query)
-	if err != nil {
-		return nil, err
+	entry.Name = n.getPropertyValue(page, "Name")
+	entry.Title = n.getPropertyValue(page, "Title")
+	entry.Address = n.getPropertyValue(page, "Address")
+	entry.Email = n.getPropertyValue(page, "Email")
+	entry.PhoneNumber = n.getPropertyValue(page, "Phone Number")
+
+	return entry
+}
+
+// getPropertyValue gets the plain text value of a property from a page.
+func (n *NotionDB) getPropertyValue(page *notionapi.Page, property string) string {
+	if prop, ok := page.Properties[property].(*notionapi.RichTextProperty); ok && len(prop.RichText) > 0 {
+		return prop.RichText[0].PlainText
 	}
 
-	var entries []NotionDBEntry
+	return ""
+}
 
-	for _, page := range result.Results {
-		entry := NotionDBEntry{}
-
-		if prop, ok := page.Properties["Name"].(*notionapi.TitleProperty); ok && len(prop.Title) > 0 {
-			entry.Name = prop.Title[0].PlainText
-		}
-
-		if prop, ok := page.Properties["Title"].(*notionapi.RichTextProperty); ok && len(prop.RichText) > 0 {
-			entry.Title = prop.RichText[0].PlainText
-		}
-
-		if prop, ok := page.Properties["Address"].(*notionapi.RichTextProperty); ok && len(prop.RichText) > 0 {
-			entry.Address = prop.RichText[0].PlainText
-		}
-
-		if prop, ok := page.Properties["Email"].(*notionapi.EmailProperty); ok {
-			entry.Email = prop.Email
-		}
-
-		if prop, ok := page.Properties["Phone Number"].(*notionapi.PhoneNumberProperty); ok {
-			entry.PhoneNumber = prop.PhoneNumber
-		}
-
-		if tagsProp, ok := page.Properties["Tags"].(*notionapi.MultiSelectProperty); ok {
-			for _, tag := range tagsProp.MultiSelect {
-				entry.Tags = append(entry.Tags, tag.Name)
-			}
-		}
-
-		if imgProp, ok := page.Properties["Img"].(*notionapi.FilesProperty); ok {
-			for _, file := range imgProp.Files {
-				if file.Type == "external" {
-					entry.ImgURL = file.External.URL
-					break
-				}
-			}
-		}
-
-		entries = append(entries, entry)
-	}
-
-	return entries, nil
+// QueryDatabaseByName 根據提供的名稱和UId查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseByName(name, UId string) ([]NotionDBEntry, error) {
+	return n.QueryDatabase(UId, "Name", name)
 }

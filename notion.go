@@ -111,7 +111,7 @@ func (n *NotionDB) AddPageToDatabase(Uid string, name string, title string, addr
 		"UID": notionapi.RichTextProperty{
 			RichText: []notionapi.RichText{
 				{
-					PlainText: Uid,
+					PlainText: name,
 					Text:      &notionapi.Text{Content: Uid},
 				},
 			},
@@ -128,7 +128,7 @@ func (n *NotionDB) AddPageToDatabase(Uid string, name string, title string, addr
 			RichText: []notionapi.RichText{
 				{
 					PlainText: name,
-					Text:      &notionapi.Text{Content: name},
+					Text:      &notionapi.Text{Content: title},
 				},
 			},
 		},

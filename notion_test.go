@@ -20,13 +20,13 @@ func TestQueryNotionDB(t *testing.T) {
 		Token:      token,
 	}
 
-	entries, err := db.QueryDatabaseByName("111")
+	entries, err := db.QueryDatabaseByName("name", "uid")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Printf("%+v\n", entries)
 
-	entries, err = db.QueryDatabaseByEmail("222@333.44")
+	entries, err = db.QueryDatabaseByEmail("email@email.com", "uid")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,7 +48,7 @@ func TestAddNotionDB(t *testing.T) {
 		Token:      token,
 	}
 
-	err := db.AddPageToDatabase("name", "title", "address", "emai@email.com", "phone")
+	err := db.AddPageToDatabase("uid", "name", "title", "address", "emai@email.com", "phone")
 	if err != nil {
 		t.Fatal(err)
 	}

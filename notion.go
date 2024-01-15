@@ -33,15 +33,24 @@ type NotionDBEntry struct {
 }
 
 // QueryDatabase 根據提供的屬性和值查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabase(property, value string) ([]NotionDBEntry, error) {
+func (n *NotionDB) QueryDatabase(UId, property, value string) ([]NotionDBEntry, error) {
 	client := notionapi.NewClient(notionapi.Token(n.Token))
 
+	// Add UId to the filter conditions
 	// 建立查詢過濾條件
 	filter := &notionapi.DatabaseQueryRequest{
-		Filter: &notionapi.PropertyFilter{
-			Property: property,
-			RichText: &notionapi.TextFilterCondition{
-				Equals: value,
+		Filter: notionapi.AndCompoundFilter{
+			notionapi.PropertyFilter{
+				Property: property,
+				RichText: &notionapi.TextFilterCondition{
+					Equals: value,
+				},
+			},
+			notionapi.PropertyFilter{
+				Property: "UID",
+				RichText: &notionapi.TextFilterCondition{
+					Equals: UId,
+				},
 			},
 		},
 	}
@@ -83,22 +92,30 @@ func (n *NotionDB) getPropertyValue(page *notionapi.Page, property string) strin
 	return ""
 }
 
-// QueryDatabaseByName 根據提供的標題和名稱查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabaseByName(name string) ([]NotionDBEntry, error) {
-	return n.QueryDatabase("Name", name)
+// QueryDatabaseByName 根據提供的名稱和UId查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseByName(name, UId string) ([]NotionDBEntry, error) {
+	return n.QueryDatabase(UId, "Name", name)
 }
 
-// QueryDatabaseByEmail 根據提供的電子郵件地址查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabaseByEmail(email string) ([]NotionDBEntry, error) {
-	return n.QueryDatabase("Email", email)
+// QueryDatabaseByEmail 根據提供的電子郵件地址和UId查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseByEmail(email, UId string) ([]NotionDBEntry, error) {
+	return n.QueryDatabase(UId, "Email", email)
 }
 
 // AddPageToDatabase adds a new page with the provided field values to the specified Notion database.
-func (n *NotionDB) AddPageToDatabase(name string, title string, address string, email string, phoneNumber string) error {
+func (n *NotionDB) AddPageToDatabase(Uid string, name string, title string, address string, email string, phoneNumber string) error {
 	client := notionapi.NewClient(notionapi.Token(n.Token))
 
 	// 建立 Properties 物件來設置頁面屬性
 	properties := notionapi.Properties{
+		"UID": notionapi.RichTextProperty{
+			RichText: []notionapi.RichText{
+				{
+					PlainText: Uid,
+					Text:      &notionapi.Text{Content: Uid},
+				},
+			},
+		},
 		"Name": notionapi.TitleProperty{
 			Title: []notionapi.RichText{
 				{

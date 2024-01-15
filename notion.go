@@ -173,7 +173,7 @@ func (n *NotionDB) AddPageToDatabase(Uid string, name string, title string, addr
 		return err
 	}
 
-	log.Println("Page added successfully.")
+	log.Println("Page added successfully:", Uid, name, title, address, email, phoneNumber)
 	return nil
 }
 

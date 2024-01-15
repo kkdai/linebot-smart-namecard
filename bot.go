@@ -57,6 +57,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			switch message := e.Message.(type) {
 			// Handle only on text message
 			case webhook.TextMessageContent:
+				// TODO: Will add LLM namecard search function here.
 				log.Printf("Got text message, ID: %s, text: %s", message.Id, message.Text)
 
 			// Handle only on Sticker message
@@ -66,6 +67,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 			// Handle only image message
 			case webhook.ImageMessageContent:
+				// 取得用戶 ID
+				var uID string
+				switch source := e.Source.(type) {
+				case *webhook.UserSource:
+					uID = source.UserId
+				case *webhook.GroupSource:
+					uID = source.UserId
+				case *webhook.RoomSource:
+					uID = source.UserId
+				}
+
 				log.Println("Got img msg ID:", message.Id)
 				//Get image binary from LINE server based on message ID.
 				data, err := GetImageBinary(blob, message.Id)
@@ -103,7 +115,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				// Check email first before adding to database.
-				dbUser, err := nDB.QueryDatabaseByEmail(person.Email)
+				dbUser, err := nDB.QueryDatabaseByEmail(uID, person.Email)
 				if err == nil && len(dbUser) > 0 {
 					log.Println("Already exist in DB", dbUser)
 					if err := replyText(e.ReplyToken, "已經存在於資料庫中，請勿重複輸入"+"\n"+jsonData); err != nil {
@@ -113,7 +125,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				// Add namecard to notion database.
-				err = nDB.AddPageToDatabase(person.Name, person.Title, person.Address, person.Email, person.PhoneNumber)
+				err = nDB.AddPageToDatabase(uID, person.Name, person.Title, person.Address, person.Email, person.PhoneNumber)
 				if err != nil {
 					log.Println("Error adding page to database:", err)
 				}

@@ -70,11 +70,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				// 取得用戶 ID
 				var uID string
 				switch source := e.Source.(type) {
-				case *webhook.UserSource:
+				case webhook.UserSource:
 					uID = source.UserId
-				case *webhook.GroupSource:
+				case webhook.GroupSource:
 					uID = source.UserId
-				case *webhook.RoomSource:
+				case webhook.RoomSource:
 					uID = source.UserId
 				}
 

@@ -22,18 +22,8 @@ type NotionDB struct {
 	Token      string
 }
 
-type NotionDBEntry struct {
-	Name        string
-	Title       string
-	Address     string
-	Email       string
-	PhoneNumber string
-	Tags        []string
-	ImgURL      string
-}
-
 // QueryDatabase 根據提供的屬性和值查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabase(UId, property, value string) ([]NotionDBEntry, error) {
+func (n *NotionDB) QueryDatabase(UId, property, value string) ([]Person, error) {
 	client := notionapi.NewClient(notionapi.Token(n.Token))
 
 	// Add UId to the filter conditions
@@ -61,7 +51,7 @@ func (n *NotionDB) QueryDatabase(UId, property, value string) ([]NotionDBEntry, 
 		return nil, err
 	}
 
-	var entries []NotionDBEntry
+	var entries []Person
 
 	for _, page := range result.Results {
 		entry := n.createEntryFromPage(&page)
@@ -71,7 +61,7 @@ func (n *NotionDB) QueryDatabase(UId, property, value string) ([]NotionDBEntry, 
 }
 
 // QueryDatabaseByEmail 根據提供的電子郵件地址和UId查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabaseByEmail(email, UId string) ([]NotionDBEntry, error) {
+func (n *NotionDB) QueryDatabaseByEmail(email, UId string) ([]Person, error) {
 	return n.QueryDatabase(UId, "Email", email)
 }
 
@@ -150,9 +140,9 @@ func (n *NotionDB) AddPageToDatabase(Uid string, name string, title string, addr
 	return nil
 }
 
-// createEntryFromPage creates a NotionDBEntry from a page.
-func (n *NotionDB) createEntryFromPage(page *notionapi.Page) NotionDBEntry {
-	entry := NotionDBEntry{}
+// createEntryFromPage creates a Person from a page.
+func (n *NotionDB) createEntryFromPage(page *notionapi.Page) Person {
+	entry := Person{}
 
 	entry.Name = n.getPropertyValue(page, "Name")
 	entry.Title = n.getPropertyValue(page, "Title")
@@ -173,6 +163,6 @@ func (n *NotionDB) getPropertyValue(page *notionapi.Page, property string) strin
 }
 
 // QueryDatabaseByName 根據提供的名稱和UId查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabaseByName(name, UId string) ([]NotionDBEntry, error) {
+func (n *NotionDB) QueryDatabaseByName(name, UId string) ([]Person, error) {
 	return n.QueryDatabase(UId, "Name", name)
 }

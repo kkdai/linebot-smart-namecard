@@ -78,7 +78,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				// Query the database with the provided uID and text
-				results, err := nDB.QueryDatabaseContains(uID, message.Text)
+				results, err := nDB.QueryDatabaseContains(message.Text, uID)
 				log.Println("Got results:", results)
 
 				// If there's an error or no results, reply with an error message

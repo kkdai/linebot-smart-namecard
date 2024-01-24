@@ -226,21 +226,27 @@ func (n *NotionDB) QueryDatabaseContains(query, UId string) ([]Person, error) {
 	var combinedResult []Person
 
 	// 進行名稱查詢
+	log.Println("QueryDatabaseContainsByName", query, UId)
 	nameResult, err := n.QueryDatabaseContainsByName(query, UId)
+	log.Println("QueryDatabaseContainsByName", nameResult, err)
 	if err != nil {
 		return nil, err
 	}
 	combinedResult = append(combinedResult, nameResult...)
 
 	// 進行電子郵件查詢
+	log.Println("QueryDatabaseContainsByEmail", query, UId)
 	emailResult, err := n.QueryDatabaseContainsByEmail(query, UId)
+	log.Println("QueryDatabaseContainsByEmail", emailResult, err)
 	if err != nil {
 		return nil, err
 	}
 	combinedResult = append(combinedResult, emailResult...)
 
 	// 進行標題查詢
+	log.Println("QueryDatabaseContainsByTitle", query, UId)
 	titleResult, err := n.QueryDatabaseContainsByTitle(query, UId)
+	log.Println("QueryDatabaseContainsByTitle", titleResult, err)
 	if err != nil {
 		return nil, err
 	}

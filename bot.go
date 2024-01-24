@@ -99,10 +99,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					log.Println("Error parsing JSON:", err)
 				}
 				log.Println("Got jsonData:", string(jsonData))
-
-				// send json string to gemini complete whole result.
-				ret := GeminiChatComplete("你幫忙使用者搜尋資料，根據找到的關鍵字，查詢到以下資料，請整理相關回覆：" + string(jsonData))
-				if err := replyText(e.ReplyToken, ret); err != nil {
+				if err := replyText(e.ReplyToken, string(jsonData)); err != nil {
 					log.Print(err)
 				}
 

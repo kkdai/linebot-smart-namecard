@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -74,10 +75,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					Token:      os.Getenv("NOTION_INTEGRATION_TOKEN"),
 				}
 
-				// Check email first before adding to database.
+				// Query the database with the provided uID and text
 				results, err := nDB.QueryDatabaseContains(uID, message.Text)
+
+				// If there's an error or no results, reply with an error message
 				if err != nil || len(results) == 0 {
-					ret := "查不到資料，請重新輸入:" + err.Error()
+					ret := "查不到資料，請重新輸入"
+					if err != nil {
+						ret = fmt.Sprintf("%s: %s", ret, err.Error())
+					}
 					if err := replyText(e.ReplyToken, ret); err != nil {
 						log.Print(err)
 					}
@@ -91,7 +97,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				// send json string to gemini complete whole result.
-				ret := GeminiChatComplete("根據你的關鍵字，查詢到以下資料:" + string(jsonData))
+				ret := GeminiChatComplete("你幫忙使用者搜尋資料，根據找到的關鍵字，查詢到以下資料，請整理相關回覆：" + string(jsonData))
 				if err := replyText(e.ReplyToken, ret); err != nil {
 					log.Print(err)
 				}

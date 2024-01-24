@@ -55,10 +55,46 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		switch e := event.(type) {
 		case webhook.MessageEvent:
 			switch message := e.Message.(type) {
+
 			// Handle only on text message
 			case webhook.TextMessageContent:
-				// TODO: Will add LLM namecard search function here.
-				log.Printf("Got text message, ID: %s, text: %s", message.Id, message.Text)
+				// 取得用戶 ID
+				var uID string
+				switch source := e.Source.(type) {
+				case webhook.UserSource:
+					uID = source.UserId
+				case webhook.GroupSource:
+					uID = source.UserId
+				case webhook.RoomSource:
+					uID = source.UserId
+				}
+				//using test as keyword to query database
+				nDB := &NotionDB{
+					DatabaseID: os.Getenv("NOTION_DB_PAGEID"),
+					Token:      os.Getenv("NOTION_INTEGRATION_TOKEN"),
+				}
+
+				// Check email first before adding to database.
+				results, err := nDB.QueryDatabaseContains(uID, message.Text)
+				if err != nil || len(results) == 0 {
+					ret := "查不到資料，請重新輸入:" + err.Error()
+					if err := replyText(e.ReplyToken, ret); err != nil {
+						log.Print(err)
+					}
+					continue
+				}
+
+				// marshal results to json string
+				jsonData, err := json.Marshal(results)
+				if err != nil {
+					log.Println("Error parsing JSON:", err)
+				}
+
+				// send json string to gemini complete whole result.
+				ret := GeminiChatComplete("根據你的關鍵字，查詢到以下資料:" + string(jsonData))
+				if err := replyText(e.ReplyToken, ret); err != nil {
+					log.Print(err)
+				}
 
 			// Handle only on Sticker message
 			case webhook.StickerMessageContent:

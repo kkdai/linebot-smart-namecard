@@ -60,6 +60,44 @@ func (n *NotionDB) QueryDatabase(UId, property, value string) ([]Person, error) 
 	return entries, nil
 }
 
+// QueryContainsDatabase 根據提供的屬性和值查詢 Notion 資料庫。
+func (n *NotionDB) QueryContainsDatabase(UId, property, value string) ([]Person, error) {
+	client := notionapi.NewClient(notionapi.Token(n.Token))
+
+	// Add UId to the filter conditions
+	// 建立查詢過濾條件
+	filter := &notionapi.DatabaseQueryRequest{
+		Filter: notionapi.AndCompoundFilter{
+			notionapi.PropertyFilter{
+				Property: property,
+				RichText: &notionapi.TextFilterCondition{
+					Contains: value,
+				},
+			},
+			notionapi.PropertyFilter{
+				Property: "UID",
+				RichText: &notionapi.TextFilterCondition{
+					Equals: UId,
+				},
+			},
+		},
+	}
+
+	// 調用 Notion API 來查詢資料庫
+	result, err := client.Database.Query(context.Background(), notionapi.DatabaseID(n.DatabaseID), filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var entries []Person
+
+	for _, page := range result.Results {
+		entry := n.createEntryFromPage(&page)
+		entries = append(entries, entry)
+	}
+	return entries, nil
+}
+
 // QueryDatabaseByEmail 根據提供的電子郵件地址和UId查詢 Notion 資料庫。
 func (n *NotionDB) QueryDatabaseByEmail(email, UId string) ([]Person, error) {
 	return n.QueryDatabase(UId, "Email", email)
@@ -165,4 +203,49 @@ func (n *NotionDB) getPropertyValue(page *notionapi.Page, property string) strin
 // QueryDatabaseByName 根據提供的名稱和UId查詢 Notion 資料庫。
 func (n *NotionDB) QueryDatabaseByName(name, UId string) ([]Person, error) {
 	return n.QueryDatabase(UId, "Name", name)
+}
+
+// QueryDatabaseContainsByName 根據提供的名稱和UId查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseContainsByName(name, UId string) ([]Person, error) {
+	return n.QueryContainsDatabase(UId, "Name", name)
+}
+
+// QueryDatabaseContainsByEmail 根據提供的名稱和UId查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseContainsByEmail(name, UId string) ([]Person, error) {
+	return n.QueryContainsDatabase(UId, "Email", name)
+}
+
+// QueryDatabaseContainsByName 根據提供的名稱和UId查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseContainsByTitle(name, UId string) ([]Person, error) {
+	return n.QueryContainsDatabase(UId, "Title", name)
+}
+
+// QueryDatabaseContains 根據提供的名稱和UId查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseContains(query, UId string) ([]Person, error) {
+	// 初始化一個空的結果集
+	var combinedResult []Person
+
+	// 進行名稱查詢
+	nameResult, err := n.QueryDatabaseContainsByName(query, UId)
+	if err != nil {
+		return nil, err
+	}
+	combinedResult = append(combinedResult, nameResult...)
+
+	// 進行電子郵件查詢
+	emailResult, err := n.QueryDatabaseContainsByEmail(query, UId)
+	if err != nil {
+		return nil, err
+	}
+	combinedResult = append(combinedResult, emailResult...)
+
+	// 進行標題查詢
+	titleResult, err := n.QueryDatabaseContainsByTitle(query, UId)
+	if err != nil {
+		return nil, err
+	}
+	combinedResult = append(combinedResult, titleResult...)
+
+	// 返回結合的結果
+	return combinedResult, nil
 }

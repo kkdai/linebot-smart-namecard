@@ -69,6 +69,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				case webhook.RoomSource:
 					uID = source.UserId
 				}
+				log.Println("Got text msg ID:", message.Id, " UID:", uID)
+
 				//using test as keyword to query database
 				nDB := &NotionDB{
 					DatabaseID: os.Getenv("NOTION_DB_PAGEID"),
@@ -77,6 +79,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 				// Query the database with the provided uID and text
 				results, err := nDB.QueryDatabaseContains(uID, message.Text)
+				log.Println("Got results:", results)
 
 				// If there's an error or no results, reply with an error message
 				if err != nil || len(results) == 0 {
@@ -95,6 +98,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					log.Println("Error parsing JSON:", err)
 				}
+				log.Println("Got jsonData:", string(jsonData))
 
 				// send json string to gemini complete whole result.
 				ret := GeminiChatComplete("你幫忙使用者搜尋資料，根據找到的關鍵字，查詢到以下資料，請整理相關回覆：" + string(jsonData))

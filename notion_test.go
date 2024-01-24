@@ -53,3 +53,39 @@ func TestAddNotionDB(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestQueryContainNotionDB(t *testing.T) {
+	token := os.Getenv("NOTION_INTEGRATION_TOKEN")
+	pageid := os.Getenv("NOTION_DB_PAGEID")
+
+	// If not set token and pageid , skip this test
+	if token == "" || pageid == "" {
+		t.Skip("NOTION_INTEGRATION_TOKEN or NOTION_DB_PAGEID not set")
+	}
+
+	db := &NotionDB{
+		DatabaseID: pageid,
+		Token:      token,
+	}
+
+	entries, err := db.QueryDatabaseContainsByName("name", "uid")
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("%+v\n", entries)
+
+	entries, err = db.QueryDatabaseContainsByEmail("email", "uid")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fmt.Printf("%+v\n", entries)
+
+	//test contains all columns (name, title, email)
+	entries, err = db.QueryDatabaseContains("keyword", "uid")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fmt.Printf("%+v\n", entries)
+}

@@ -56,9 +56,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		switch e := event.(type) {
 		case webhook.MessageEvent:
 			switch message := e.Message.(type) {
-
 			// Handle only on text message
 			case webhook.TextMessageContent:
+				if message.Text == "test" {
+					if err := SendFlexMsg(e.ReplyToken); err != nil {
+						log.Print(err)
+					}
+					continue
+				}
+
 				// 取得用戶 ID
 				var uID string
 				switch source := e.Source.(type) {

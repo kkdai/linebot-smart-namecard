@@ -147,7 +147,7 @@ func (n *NotionDB) AddPageToDatabase(person Person) error {
 				},
 			},
 		},
-		"Compyny": notionapi.RichTextProperty{
+		"Company": notionapi.RichTextProperty{
 			RichText: []notionapi.RichText{
 				{
 					PlainText: person.Company,

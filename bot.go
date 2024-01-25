@@ -109,6 +109,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					continue
 				}
 
+				log.Println("Got results:", results)
 				err = SendFlexMsg(e.ReplyToken, results)
 				if err != nil {
 					log.Println("Error send result", err)

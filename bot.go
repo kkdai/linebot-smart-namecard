@@ -59,7 +59,16 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			// Handle only on text message
 			case webhook.TextMessageContent:
 				if message.Text == "test" {
-					if err := SendFlexMsg(e.ReplyToken); err != nil {
+					cards := []Person{
+						Person{
+							Name:        "test",
+							Title:       "test",
+							Address:     "test",
+							Email:       "test",
+							PhoneNumber: "test",
+						},
+					}
+					if err := SendFlexMsg(e.ReplyToken, cards); err != nil {
 						log.Print(err)
 					}
 					continue

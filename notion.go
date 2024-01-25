@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/jomei/notionapi"
@@ -23,11 +24,25 @@ type NotionDB struct {
 	UID        string
 }
 
-// QueryDatabase 根據提供的屬性和值查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabase(property, value string) ([]Person, error) {
+// QueryDatabaseWithFilter 根據提供的過濾器查詢 Notion 資料庫。
+func (n *NotionDB) queryDatabaseWithFilter(filter *notionapi.DatabaseQueryRequest) ([]Person, error) {
 	client := notionapi.NewClient(notionapi.Token(n.Token))
 
-	// 建立查詢過濾條件
+	result, err := client.Database.Query(context.Background(), notionapi.DatabaseID(n.DatabaseID), filter)
+	if err != nil {
+		return nil, fmt.Errorf("error querying database: %w", err)
+	}
+
+	var entries []Person
+	for _, page := range result.Results {
+		entry := n.createEntryFromPage(&page)
+		entries = append(entries, entry)
+	}
+	return entries, nil
+}
+
+// QueryDatabase 根據提供的屬性和值查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabase(property, value string) ([]Person, error) {
 	filter := &notionapi.DatabaseQueryRequest{
 		Filter: notionapi.AndCompoundFilter{
 			notionapi.PropertyFilter{
@@ -44,27 +59,11 @@ func (n *NotionDB) QueryDatabase(property, value string) ([]Person, error) {
 			},
 		},
 	}
-
-	// 調用 Notion API 來查詢資料庫
-	result, err := client.Database.Query(context.Background(), notionapi.DatabaseID(n.DatabaseID), filter)
-	if err != nil {
-		return nil, err
-	}
-
-	var entries []Person
-
-	for _, page := range result.Results {
-		entry := n.createEntryFromPage(&page)
-		entries = append(entries, entry)
-	}
-	return entries, nil
+	return n.queryDatabaseWithFilter(filter)
 }
 
-// QueryContainsDatabase 根據提供的屬性和值查詢 Notion 資料庫。
+// QueryDatabaseContains 根據提供的屬性和值查詢 Notion 資料庫。
 func (n *NotionDB) QueryContainsDatabase(property, value string) ([]Person, error) {
-	client := notionapi.NewClient(notionapi.Token(n.Token))
-
-	// 建立查詢過濾條件
 	filter := &notionapi.DatabaseQueryRequest{
 		Filter: notionapi.AndCompoundFilter{
 			notionapi.PropertyFilter{
@@ -81,20 +80,11 @@ func (n *NotionDB) QueryContainsDatabase(property, value string) ([]Person, erro
 			},
 		},
 	}
+	return n.queryDatabaseWithFilter(filter)
+}
 
-	// 調用 Notion API 來查詢資料庫
-	result, err := client.Database.Query(context.Background(), notionapi.DatabaseID(n.DatabaseID), filter)
-	if err != nil {
-		return nil, err
-	}
-
-	var entries []Person
-
-	for _, page := range result.Results {
-		entry := n.createEntryFromPage(&page)
-		entries = append(entries, entry)
-	}
-	return entries, nil
+func (n *NotionDB) QueryDatabaseContainsByEmail(email string) ([]Person, error) {
+	return n.QueryContainsDatabase("Email", email)
 }
 
 // QueryDatabaseByEmail 根據提供的電子郵件地址查詢 Notion 資料庫。
@@ -207,11 +197,6 @@ func (n *NotionDB) QueryDatabaseByName(name string) ([]Person, error) {
 // QueryDatabaseContainsByName 根據提供的名稱查詢 Notion 資料庫。
 func (n *NotionDB) QueryDatabaseContainsByName(name string) ([]Person, error) {
 	return n.QueryContainsDatabase("Name", name)
-}
-
-// QueryDatabaseContainsByEmail 根據提供的名稱查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabaseContainsByEmail(name string) ([]Person, error) {
-	return n.QueryContainsDatabase("Email", name)
 }
 
 // QueryDatabaseContainsByName 根據提供的名稱查詢 Notion 資料庫。

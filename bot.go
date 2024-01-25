@@ -174,7 +174,10 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				dbUser, err := nDB.QueryDatabaseByEmail(person.Email)
 				if err == nil && len(dbUser) > 0 {
 					log.Println("Already exist in DB", dbUser)
-					if err := replyText(e.ReplyToken, "已經存在於資料庫中，請勿重複輸入"+"\n"+jsonData); err != nil {
+					if err := SendFlexMsg(e.ReplyToken, dbUser); err != nil {
+						log.Println("Error send result", err)
+					}
+					if err = replyText(e.ReplyToken, "已經存在於資料庫中，請勿重複輸入"); err != nil {
 						log.Print(err)
 					}
 					continue

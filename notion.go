@@ -98,16 +98,16 @@ func (n *NotionDB) AddPageToDatabase(name string, title string, address string, 
 
 	// 建立 Properties 物件來設置頁面屬性
 	properties := notionapi.Properties{
-		"UID": notionapi.RichTextProperty{
-			RichText: []notionapi.RichText{
+		"UID": notionapi.TitleProperty{
+			Title: []notionapi.RichText{
 				{
 					PlainText: name,
 					Text:      &notionapi.Text{Content: n.UID},
 				},
 			},
 		},
-		"Name": notionapi.TitleProperty{
-			Title: []notionapi.RichText{
+		"Name": notionapi.RichTextProperty{
+			RichText: []notionapi.RichText{
 				{
 					PlainText: name,
 					Text:      &notionapi.Text{Content: name},

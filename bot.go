@@ -181,7 +181,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				// Add namecard to notion database.
-				err = nDB.AddPageToDatabase(person.Name, person.Title, person.Address, person.Email, person.PhoneNumber)
+				err = nDB.AddPageToDatabase(person)
 				if err != nil {
 					log.Println("Error adding page to database:", err)
 				}

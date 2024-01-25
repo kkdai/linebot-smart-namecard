@@ -50,7 +50,7 @@ func TestAddNotionDB(t *testing.T) {
 		UID:        "uid",
 	}
 
-	err := db.AddPageToDatabase("name", "title", "address", "emai@email.com", "phone")
+	err := db.AddPageToDatabase(Person{Name: "test", Title: "test", Address: "test", Email: "test", PhoneNumber: "test", Company: "test"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -91,4 +91,5 @@ func TestQueryContainNotionDB(t *testing.T) {
 	}
 
 	fmt.Printf("%+v\n", entries)
+
 }

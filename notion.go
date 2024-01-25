@@ -15,6 +15,7 @@ type Person struct {
 	Address     string `json:"address"`
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phone_number"`
+	Company     string `json:"company"`
 }
 
 // DatabaseEntry 定義了 Notion 資料庫條目的結構體。
@@ -93,7 +94,7 @@ func (n *NotionDB) QueryDatabaseByEmail(email string) ([]Person, error) {
 }
 
 // AddPageToDatabase adds a new page with the provided field values to the specified Notion database.
-func (n *NotionDB) AddPageToDatabase(name string, title string, address string, email string, phoneNumber string) error {
+func (n *NotionDB) AddPageToDatabase(person Person) error {
 	client := notionapi.NewClient(notionapi.Token(n.Token))
 
 	// 建立 Properties 物件來設置頁面屬性
@@ -101,7 +102,7 @@ func (n *NotionDB) AddPageToDatabase(name string, title string, address string, 
 		"UID": notionapi.TitleProperty{
 			Title: []notionapi.RichText{
 				{
-					PlainText: name,
+					PlainText: n.UID,
 					Text:      &notionapi.Text{Content: n.UID},
 				},
 			},
@@ -109,40 +110,48 @@ func (n *NotionDB) AddPageToDatabase(name string, title string, address string, 
 		"Name": notionapi.RichTextProperty{
 			RichText: []notionapi.RichText{
 				{
-					PlainText: name,
-					Text:      &notionapi.Text{Content: name},
+					PlainText: person.Name,
+					Text:      &notionapi.Text{Content: person.Name},
 				},
 			},
 		},
 		"Title": notionapi.RichTextProperty{
 			RichText: []notionapi.RichText{
 				{
-					PlainText: name,
-					Text:      &notionapi.Text{Content: title},
+					PlainText: person.Title,
+					Text:      &notionapi.Text{Content: person.Title},
 				},
 			},
 		},
 		"Address": notionapi.RichTextProperty{
 			RichText: []notionapi.RichText{
 				{
-					PlainText: name,
-					Text:      &notionapi.Text{Content: address},
+					PlainText: person.Address,
+					Text:      &notionapi.Text{Content: person.Address},
 				},
 			},
 		},
 		"Email": notionapi.RichTextProperty{
 			RichText: []notionapi.RichText{
 				{
-					PlainText: name,
-					Text:      &notionapi.Text{Content: email},
+					PlainText: person.Email,
+					Text:      &notionapi.Text{Content: person.Email},
 				},
 			},
 		},
 		"Phone Number": notionapi.RichTextProperty{
 			RichText: []notionapi.RichText{
 				{
-					PlainText: name,
-					Text:      &notionapi.Text{Content: phoneNumber},
+					PlainText: person.PhoneNumber,
+					Text:      &notionapi.Text{Content: person.PhoneNumber},
+				},
+			},
+		},
+		"Compyny": notionapi.RichTextProperty{
+			RichText: []notionapi.RichText{
+				{
+					PlainText: person.Company,
+					Text:      &notionapi.Text{Content: person.Company},
 				},
 			},
 		},
@@ -163,7 +172,7 @@ func (n *NotionDB) AddPageToDatabase(name string, title string, address string, 
 		return err
 	}
 
-	log.Println("Page added successfully:", n.UID, name, title, address, email, phoneNumber)
+	log.Println("Page added successfully:", n.UID, person)
 	return nil
 }
 
@@ -176,6 +185,7 @@ func (n *NotionDB) createEntryFromPage(page *notionapi.Page) Person {
 	entry.Address = n.getPropertyValue(page, "Address")
 	entry.Email = n.getPropertyValue(page, "Email")
 	entry.PhoneNumber = n.getPropertyValue(page, "Phone Number")
+	entry.Company = n.getPropertyValue(page, "Company")
 
 	return entry
 }

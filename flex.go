@@ -68,7 +68,7 @@ func getSingleCard(card Person) messaging_api.FlexBubble {
 						&messaging_api.FlexText{
 							Color:  "#6EC4C4",
 							Size:   "sm",
-							Text:   "Company",
+							Text:   card.Company,
 							Weight: "bold",
 						},
 						&messaging_api.FlexText{

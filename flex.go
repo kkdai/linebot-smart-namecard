@@ -134,18 +134,132 @@ func SendFlexMsg(replyToken string) error {
 					Contents: []messaging_api.FlexComponentInterface{
 						&messaging_api.FlexBox{
 							Layout: messaging_api.FlexBoxLAYOUT_VERTICAL,
-							Flex:   1,
-						},
-						&messaging_api.FlexBox{
-							Layout: messaging_api.FlexBoxLAYOUT_VERTICAL,
 							Width:  "100px",
-							Height: "100px",
+							Contents: []messaging_api.FlexComponentInterface{
+								&messaging_api.FlexBox{
+									Layout: messaging_api.FlexBoxLAYOUT_VERTICAL,
+									Flex:   1,
+									Contents: []messaging_api.FlexComponentInterface{
+										&messaging_api.FlexFiller{},
+									},
+								},
+								&messaging_api.FlexBox{
+									Layout: messaging_api.FlexBoxLAYOUT_VERTICAL,
+									Width:  "100px",
+									Height: "100px",
+									Contents: []messaging_api.FlexComponentInterface{
+										&messaging_api.FlexImage{
+											Align:       "center",
+											AspectMode:  "cover",
+											AspectRatio: "1:1",
+											Gravity:     "center",
+											Url:         "https://raw.githubusercontent.com/kkdai/linebot-smart-namecard/main/img/logo.jpeg",
+										},
+									},
+								},
+								&messaging_api.FlexBox{
+									Layout: messaging_api.FlexBoxLAYOUT_VERTICAL,
+									Flex:   1,
+									Contents: []messaging_api.FlexComponentInterface{
+										&messaging_api.FlexFiller{},
+									},
+								},
+							},
 						},
 					},
 				},
 			},
 		},
 	}
+
+	// 									{
+	// 										"align": "center",
+	// 										"aspectMode": "cover",
+	// 										"aspectRatio": "1:1",
+	// 										"gravity": "center",
+	// 										"type": "image",
+	// 										"url": "https://raw.githubusercontent.com/kkdai/linebot-smart-namecard/main/img/logo.jpeg"
+	// 									}
+	// 								]
+	// 							},
+	// 							{
+	// 								"flex": 1,
+	// 								"layout": "vertical",
+	// 								"type": "box",
+	// 								"contents": [
+	// 									{
+	// 										"type": "filler"
+	// 									}
+	// 								]
+	// 							}
+	// 						]
+	// 					},
+	// 					{
+	// 						"borderColor": "#6EC4C4",
+	// 						"borderWidth": "1px",
+	// 						"flex": 0,
+	// 						"height": "120px",
+	// 						"layout": "vertical",
+	// 						"type": "box",
+	// 						"contents": [
+	// 							{
+	// 								"type": "filler"
+	// 							}
+	// 						]
+	// 					},
+	// 					{
+	// 						"flex": 3,
+	// 						"layout": "vertical",
+	// 						"type": "box",
+	// 						"contents": [
+	// 							{
+	// 								"flex": 1,
+	// 								"layout": "vertical",
+	// 								"type": "box",
+	// 								"contents": [
+	// 									{
+	// 										"type": "filler"
+	// 									}
+	// 								]
+	// 							},
+	// 							{
+	// 								"color": "#6EC4C4",
+	// 								"size": "sm",
+	// 								"text": "Company",
+	// 								"type": "text",
+	// 								"weight": "bold"
+	// 							},
+	// 							{
+	// 								"color": "#81C997",
+	// 								"margin": "xxl",
+	// 								"size": "xxs",
+	// 								"type": "text",
+	// 								"text": "Title"
+	// 							},
+	// 							{
+	// 								"color": "#81C997",
+	// 								"size": "xl",
+	// 								"text": "Name",
+	// 								"type": "text",
+	// 								"weight": "bold"
+	// 							},
+	// 							{
+	// 								"type": "text",
+	// 								"text": "address"
+	// 							},
+	// 							{
+	// 								"type": "text",
+	// 								"text": "email"
+	// 							},
+	// 							{
+	// 								"type": "text",
+	// 								"text": "phone"
+	// 							}
+	// 						]
+	// 					}
+	// 				]
+	// 			}
+	// 		},
 
 	if _, err := bot.ReplyMessage(
 		&messaging_api.ReplyMessageRequest{

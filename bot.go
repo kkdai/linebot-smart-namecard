@@ -75,10 +75,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				nDB := &NotionDB{
 					DatabaseID: os.Getenv("NOTION_DB_PAGEID"),
 					Token:      os.Getenv("NOTION_INTEGRATION_TOKEN"),
+					UID:        uID,
 				}
 
 				// Query the database with the provided uID and text
-				results, err := nDB.QueryDatabaseContains(message.Text, uID)
+				results, err := nDB.QueryDatabaseContains(message.Text)
 				log.Println("Got results:", results)
 
 				// If there's an error or no results, reply with an error message
@@ -155,10 +156,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				nDB := &NotionDB{
 					DatabaseID: os.Getenv("NOTION_DB_PAGEID"),
 					Token:      os.Getenv("NOTION_INTEGRATION_TOKEN"),
+					UID:        uID,
 				}
 
 				// Check email first before adding to database.
-				dbUser, err := nDB.QueryDatabaseByEmail(uID, person.Email)
+				dbUser, err := nDB.QueryDatabaseByEmail(person.Email)
 				if err == nil && len(dbUser) > 0 {
 					log.Println("Already exist in DB", dbUser)
 					if err := replyText(e.ReplyToken, "已經存在於資料庫中，請勿重複輸入"+"\n"+jsonData); err != nil {
@@ -168,7 +170,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				// Add namecard to notion database.
-				err = nDB.AddPageToDatabase(uID, person.Name, person.Title, person.Address, person.Email, person.PhoneNumber)
+				err = nDB.AddPageToDatabase(person.Name, person.Title, person.Address, person.Email, person.PhoneNumber)
 				if err != nil {
 					log.Println("Error adding page to database:", err)
 				}

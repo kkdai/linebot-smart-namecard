@@ -20,13 +20,13 @@ type Person struct {
 type NotionDB struct {
 	DatabaseID string
 	Token      string
+	UID        string
 }
 
 // QueryDatabase 根據提供的屬性和值查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabase(UId, property, value string) ([]Person, error) {
+func (n *NotionDB) QueryDatabase(property, value string) ([]Person, error) {
 	client := notionapi.NewClient(notionapi.Token(n.Token))
 
-	// Add UId to the filter conditions
 	// 建立查詢過濾條件
 	filter := &notionapi.DatabaseQueryRequest{
 		Filter: notionapi.AndCompoundFilter{
@@ -39,7 +39,7 @@ func (n *NotionDB) QueryDatabase(UId, property, value string) ([]Person, error) 
 			notionapi.PropertyFilter{
 				Property: "UID",
 				RichText: &notionapi.TextFilterCondition{
-					Equals: UId,
+					Equals: n.UID,
 				},
 			},
 		},
@@ -61,10 +61,9 @@ func (n *NotionDB) QueryDatabase(UId, property, value string) ([]Person, error) 
 }
 
 // QueryContainsDatabase 根據提供的屬性和值查詢 Notion 資料庫。
-func (n *NotionDB) QueryContainsDatabase(UId, property, value string) ([]Person, error) {
+func (n *NotionDB) QueryContainsDatabase(property, value string) ([]Person, error) {
 	client := notionapi.NewClient(notionapi.Token(n.Token))
 
-	// Add UId to the filter conditions
 	// 建立查詢過濾條件
 	filter := &notionapi.DatabaseQueryRequest{
 		Filter: notionapi.AndCompoundFilter{
@@ -77,7 +76,7 @@ func (n *NotionDB) QueryContainsDatabase(UId, property, value string) ([]Person,
 			notionapi.PropertyFilter{
 				Property: "UID",
 				RichText: &notionapi.TextFilterCondition{
-					Equals: UId,
+					Equals: n.UID,
 				},
 			},
 		},
@@ -98,13 +97,13 @@ func (n *NotionDB) QueryContainsDatabase(UId, property, value string) ([]Person,
 	return entries, nil
 }
 
-// QueryDatabaseByEmail 根據提供的電子郵件地址和UId查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabaseByEmail(email, UId string) ([]Person, error) {
-	return n.QueryDatabase(UId, "Email", email)
+// QueryDatabaseByEmail 根據提供的電子郵件地址查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseByEmail(email string) ([]Person, error) {
+	return n.QueryDatabase("Email", email)
 }
 
 // AddPageToDatabase adds a new page with the provided field values to the specified Notion database.
-func (n *NotionDB) AddPageToDatabase(Uid string, name string, title string, address string, email string, phoneNumber string) error {
+func (n *NotionDB) AddPageToDatabase(name string, title string, address string, email string, phoneNumber string) error {
 	client := notionapi.NewClient(notionapi.Token(n.Token))
 
 	// 建立 Properties 物件來設置頁面屬性
@@ -113,7 +112,7 @@ func (n *NotionDB) AddPageToDatabase(Uid string, name string, title string, addr
 			RichText: []notionapi.RichText{
 				{
 					PlainText: name,
-					Text:      &notionapi.Text{Content: Uid},
+					Text:      &notionapi.Text{Content: n.UID},
 				},
 			},
 		},
@@ -174,7 +173,7 @@ func (n *NotionDB) AddPageToDatabase(Uid string, name string, title string, addr
 		return err
 	}
 
-	log.Println("Page added successfully:", Uid, name, title, address, email, phoneNumber)
+	log.Println("Page added successfully:", n.UID, name, title, address, email, phoneNumber)
 	return nil
 }
 
@@ -200,34 +199,34 @@ func (n *NotionDB) getPropertyValue(page *notionapi.Page, property string) strin
 	return ""
 }
 
-// QueryDatabaseByName 根據提供的名稱和UId查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabaseByName(name, UId string) ([]Person, error) {
-	return n.QueryDatabase(UId, "Name", name)
+// QueryDatabaseByName 根據提供的名稱查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseByName(name string) ([]Person, error) {
+	return n.QueryDatabase("Name", name)
 }
 
-// QueryDatabaseContainsByName 根據提供的名稱和UId查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabaseContainsByName(name, UId string) ([]Person, error) {
-	return n.QueryContainsDatabase(UId, "Name", name)
+// QueryDatabaseContainsByName 根據提供的名稱查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseContainsByName(name string) ([]Person, error) {
+	return n.QueryContainsDatabase("Name", name)
 }
 
-// QueryDatabaseContainsByEmail 根據提供的名稱和UId查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabaseContainsByEmail(name, UId string) ([]Person, error) {
-	return n.QueryContainsDatabase(UId, "Email", name)
+// QueryDatabaseContainsByEmail 根據提供的名稱查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseContainsByEmail(name string) ([]Person, error) {
+	return n.QueryContainsDatabase("Email", name)
 }
 
-// QueryDatabaseContainsByName 根據提供的名稱和UId查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabaseContainsByTitle(name, UId string) ([]Person, error) {
-	return n.QueryContainsDatabase(UId, "Title", name)
+// QueryDatabaseContainsByName 根據提供的名稱查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseContainsByTitle(name string) ([]Person, error) {
+	return n.QueryContainsDatabase("Title", name)
 }
 
-// QueryDatabaseContains 根據提供的名稱和UId查詢 Notion 資料庫。
-func (n *NotionDB) QueryDatabaseContains(query, UId string) ([]Person, error) {
+// QueryDatabaseContains 根據提供的名稱查詢 Notion 資料庫。
+func (n *NotionDB) QueryDatabaseContains(query string) ([]Person, error) {
 	// 初始化一個空的結果集
 	var combinedResult []Person
 
 	// 進行名稱查詢
-	log.Println("QueryDatabaseContainsByName", query, UId)
-	nameResult, err := n.QueryDatabaseContainsByName(query, UId)
+	log.Println("QueryDatabaseContainsByName", query, n.UID)
+	nameResult, err := n.QueryDatabaseContainsByName(query)
 	log.Println("QueryDatabaseContainsByName", nameResult, err)
 	if err != nil {
 		return nil, err
@@ -235,8 +234,8 @@ func (n *NotionDB) QueryDatabaseContains(query, UId string) ([]Person, error) {
 	combinedResult = append(combinedResult, nameResult...)
 
 	// 進行電子郵件查詢
-	log.Println("QueryDatabaseContainsByEmail", query, UId)
-	emailResult, err := n.QueryDatabaseContainsByEmail(query, UId)
+	log.Println("QueryDatabaseContainsByEmail", query, n.UID)
+	emailResult, err := n.QueryDatabaseContainsByEmail(query)
 	log.Println("QueryDatabaseContainsByEmail", emailResult, err)
 	if err != nil {
 		return nil, err
@@ -244,8 +243,8 @@ func (n *NotionDB) QueryDatabaseContains(query, UId string) ([]Person, error) {
 	combinedResult = append(combinedResult, emailResult...)
 
 	// 進行標題查詢
-	log.Println("QueryDatabaseContainsByTitle", query, UId)
-	titleResult, err := n.QueryDatabaseContainsByTitle(query, UId)
+	log.Println("QueryDatabaseContainsByTitle", query, n.UID)
+	titleResult, err := n.QueryDatabaseContainsByTitle(query)
 	log.Println("QueryDatabaseContainsByTitle", titleResult, err)
 	if err != nil {
 		return nil, err

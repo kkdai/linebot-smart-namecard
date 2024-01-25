@@ -68,7 +68,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							PhoneNumber: "test",
 						},
 					}
-					if err := SendFlexMsg(e.ReplyToken, cards); err != nil {
+					if err := SendFlexMsg(e.ReplyToken, cards, "test card"); err != nil {
 						log.Print(err)
 					}
 					continue
@@ -110,7 +110,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				log.Println("Got results:", results)
-				err = SendFlexMsg(e.ReplyToken, results)
+				err = SendFlexMsg(e.ReplyToken, results, "根據關鍵字查詢結果")
 				if err != nil {
 					log.Println("Error send result", err)
 				}
@@ -174,11 +174,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				dbUser, err := nDB.QueryDatabaseByEmail(person.Email)
 				if err == nil && len(dbUser) > 0 {
 					log.Println("Already exist in DB", dbUser)
-					if err := SendFlexMsg(e.ReplyToken, dbUser); err != nil {
+					if err := SendFlexMsg(e.ReplyToken, dbUser, "已經存在於資料庫中，請勿重複輸入"); err != nil {
 						log.Println("Error send result", err)
-					}
-					if err = replyText(e.ReplyToken, "已經存在於資料庫中，請勿重複輸入"); err != nil {
-						log.Print(err)
 					}
 					continue
 				}
@@ -189,13 +186,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					log.Println("Error adding page to database:", err)
 				}
 
-				if err := SendFlexMsg(e.ReplyToken, []Person{person}); err != nil {
+				if err := SendFlexMsg(e.ReplyToken, []Person{person}, "新增到資料庫"); err != nil {
 					log.Println("Error send result", err)
-				}
-
-				// Completed, reply final result to user.
-				if err = replyText(e.ReplyToken, "新增到資料庫"); err != nil {
-					log.Print(err)
 				}
 
 			// Handle only video message

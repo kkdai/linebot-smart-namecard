@@ -100,7 +100,7 @@ func getSingleCard(card Person) messaging_api.FlexBubble {
 }
 
 // SendFlexMsg: Send flex message to LINE server.
-func SendFlexMsg(replyToken string, people []Person) error {
+func SendFlexMsg(replyToken string, people []Person, msg string) error {
 	var cards []messaging_api.FlexBubble
 	for _, card := range people {
 		cards = append(cards, getSingleCard(card))
@@ -207,10 +207,15 @@ func SendFlexMsg(replyToken string, people []Person) error {
 	if _, err := bot.ReplyMessage(
 		&messaging_api.ReplyMessageRequest{
 			ReplyToken: replyToken,
-			Messages: []messaging_api.MessageInterface{&messaging_api.FlexMessage{
-				Contents: contents,
-				AltText:  "Flex message alt text",
-			}},
+			Messages: []messaging_api.MessageInterface{
+				&messaging_api.FlexMessage{
+					Contents: contents,
+					AltText:  "請到手機上查看名片資訊",
+				},
+				&messaging_api.TextMessage{
+					Text: msg,
+				},
+			},
 		},
 	); err != nil {
 		return err

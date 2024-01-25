@@ -60,7 +60,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			case webhook.TextMessageContent:
 				if message.Text == "test" {
 					cards := []Person{
-						Person{
+						{
 							Name:        "test",
 							Title:       "test",
 							Address:     "test",
@@ -109,14 +109,9 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					continue
 				}
 
-				// marshal results to json string
-				jsonData, err := json.Marshal(results)
+				err = SendFlexMsg(e.ReplyToken, results)
 				if err != nil {
-					log.Println("Error parsing JSON:", err)
-				}
-				log.Println("Got jsonData:", string(jsonData))
-				if err := replyText(e.ReplyToken, string(jsonData)); err != nil {
-					log.Print(err)
+					log.Println("Error send result", err)
 				}
 
 			// Handle only on Sticker message
@@ -190,8 +185,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					log.Println("Error adding page to database:", err)
 				}
 
+				if err := SendFlexMsg(e.ReplyToken, []Person{person}); err != nil {
+					log.Println("Error send result", err)
+				}
+
 				// Completed, reply final result to user.
-				if err := replyText(e.ReplyToken, jsonData+"\n"+"新增到資料庫"); err != nil {
+				if err = replyText(e.ReplyToken, "新增到資料庫"); err != nil {
 					log.Print(err)
 				}
 

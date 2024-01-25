@@ -5,7 +5,13 @@ LINE Bot 使用 Google Gemini Pro 跟 Notion DB 來做的名片小幫手
 
 ### LINE Bot Screen
 
-![](img/screenshop.png)
+#### Add new card into DB
+
+![](img/add_card.jpg)
+
+#### Search keyword to Name, Title or Email.
+
+![](img/query.jpg)
 
 ### Notion DB image
 

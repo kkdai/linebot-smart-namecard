@@ -121,12 +121,12 @@ func SendFlexMsg(replyToken string, people []Person, msg string) error {
 		&messaging_api.ReplyMessageRequest{
 			ReplyToken: replyToken,
 			Messages: []messaging_api.MessageInterface{
+				&messaging_api.TextMessage{
+					Text: msg,
+				},
 				&messaging_api.FlexMessage{
 					Contents: contents,
 					AltText:  "請到手機上查看名片資訊",
-				},
-				&messaging_api.TextMessage{
-					Text: msg,
 				},
 			},
 		},

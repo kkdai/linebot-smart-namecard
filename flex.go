@@ -97,7 +97,7 @@ func getSingleCard(card Person) messaging_api.FlexBubble {
 							Text: card.Email,
 						},
 						&messaging_api.FlexText{
-							Text: card.PhoneNumber,
+							Text: card.Phone,
 						},
 					},
 				},
@@ -191,9 +191,9 @@ func getNewSingleCard(card Person) messaging_api.FlexBubble {
 						&messaging_api.FlexText{
 							Align:  "end",
 							Margin: "xxl",
-							Text:   card.PhoneNumber,
+							Text:   card.Phone,
 							Action: &messaging_api.UriAction{
-								Uri: "tel:" + card.PhoneNumber,
+								Uri: "tel:" + card.Phone,
 							},
 						},
 						&messaging_api.FlexText{

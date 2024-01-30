@@ -50,7 +50,7 @@ func TestAddNotionDB(t *testing.T) {
 		UID:        "uid",
 	}
 
-	err := db.AddPageToDatabase(Person{Name: "test", Title: "test", Address: "test", Email: "test", PhoneNumber: "test", Company: "test"})
+	err := db.AddPageToDatabase(Person{Name: "test", Title: "test", Address: "test", Email: "test", Phone: "test", Company: "test"})
 	if err != nil {
 		t.Fatal(err)
 	}

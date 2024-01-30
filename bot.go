@@ -15,7 +15,7 @@ import (
 )
 
 // Const variables of Prompts.
-const ImagePrompt = "這是一張名片，你是一個名片秘書。請將以下資訊整理成 json 給我。如果看不出來的，幫我填寫 N/A， 只好 json 就好:  Name, Title, Address, Email, Phone Number, Company"
+const ImagePrompt = "這是一張名片，你是一個名片秘書。請將以下資訊整理成 json 給我。如果看不出來的，幫我填寫 N/A， 只好 json 就好:  Name, Title, Address, Email, Phone, Company"
 
 // replyText: Reply text message to LINE server.
 func replyText(replyToken, text string) error {
@@ -61,11 +61,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				if message.Text == "test" {
 					cards := []Person{
 						{
-							Name:        "test",
-							Title:       "test",
-							Address:     "test",
-							Email:       "test",
-							PhoneNumber: "test",
+							Name:    "test",
+							Title:   "test",
+							Address: "test",
+							Email:   "test",
+							Phone:   "test",
 						},
 					}
 					if err := SendFlexMsg(e.ReplyToken, cards, "test card"); err != nil {

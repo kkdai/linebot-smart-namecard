@@ -10,12 +10,12 @@ import (
 
 // Person 定義了 JSON 資料的結構體
 type Person struct {
-	Name        string `json:"name"`
-	Title       string `json:"title"`
-	Address     string `json:"address"`
-	Email       string `json:"email"`
-	PhoneNumber string `json:"phone_number"`
-	Company     string `json:"company"`
+	Name    string `json:"name"`
+	Title   string `json:"title"`
+	Address string `json:"address"`
+	Email   string `json:"email"`
+	Phone   string `json:"phone"`
+	Company string `json:"company"`
 }
 
 // DatabaseEntry 定義了 Notion 資料庫條目的結構體。
@@ -139,11 +139,11 @@ func (n *NotionDB) AddPageToDatabase(person Person) error {
 				},
 			},
 		},
-		"Phone Number": notionapi.RichTextProperty{
+		"Phone": notionapi.RichTextProperty{
 			RichText: []notionapi.RichText{
 				{
-					PlainText: person.PhoneNumber,
-					Text:      &notionapi.Text{Content: person.PhoneNumber},
+					PlainText: person.Phone,
+					Text:      &notionapi.Text{Content: person.Phone},
 				},
 			},
 		},
@@ -184,7 +184,7 @@ func (n *NotionDB) createEntryFromPage(page *notionapi.Page) Person {
 	entry.Title = n.getPropertyValue(page, "Title")
 	entry.Address = n.getPropertyValue(page, "Address")
 	entry.Email = n.getPropertyValue(page, "Email")
-	entry.PhoneNumber = n.getPropertyValue(page, "Phone Number")
+	entry.Phone = n.getPropertyValue(page, "Phone Number")
 	entry.Company = n.getPropertyValue(page, "Company")
 
 	return entry

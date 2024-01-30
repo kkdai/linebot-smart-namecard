@@ -184,7 +184,7 @@ func (n *NotionDB) createEntryFromPage(page *notionapi.Page) Person {
 	entry.Title = n.getPropertyValue(page, "Title")
 	entry.Address = n.getPropertyValue(page, "Address")
 	entry.Email = n.getPropertyValue(page, "Email")
-	entry.Phone = n.getPropertyValue(page, "Phone Number")
+	entry.Phone = n.getPropertyValue(page, "Phone")
 	entry.Company = n.getPropertyValue(page, "Company")
 
 	return entry

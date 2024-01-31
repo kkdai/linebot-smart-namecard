@@ -144,7 +144,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				// Chat with Image
 				ret, err := GeminiImage(data, card_prompt)
 				if err != nil {
-					ret = "無法辨識影片內容文字，請重新輸入:" + err.Error()
+					ret = "無法辨識圖片內容文字，請重新輸入:" + err.Error()
 					if err := replyText(e.ReplyToken, ret); err != nil {
 						log.Print(err)
 					}

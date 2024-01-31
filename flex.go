@@ -8,109 +8,11 @@ import (
 
 const LogoImageUrl = "https://raw.githubusercontent.com/kkdai/linebot-smart-namecard/main/img/logo.jpeg"
 
-// getSingleCard: Send flex message to LINE server.
-func getSingleCard(card Person) messaging_api.FlexBubble {
-
-	return messaging_api.FlexBubble{
-		Size: messaging_api.FlexBubbleSIZE_GIGA,
-		Body: &messaging_api.FlexBox{
-			Layout:  messaging_api.FlexBoxLAYOUT_HORIZONTAL,
-			Spacing: "lg",
-			Contents: []messaging_api.FlexComponentInterface{
-				&messaging_api.FlexBox{
-					Layout: messaging_api.FlexBoxLAYOUT_VERTICAL,
-					Width:  "100px",
-					Contents: []messaging_api.FlexComponentInterface{
-						&messaging_api.FlexBox{
-							Layout: messaging_api.FlexBoxLAYOUT_VERTICAL,
-							Flex:   1,
-							Contents: []messaging_api.FlexComponentInterface{
-								&messaging_api.FlexFiller{},
-							},
-						},
-						&messaging_api.FlexBox{
-							Layout: messaging_api.FlexBoxLAYOUT_VERTICAL,
-							Width:  "100px",
-							Height: "100px",
-							Contents: []messaging_api.FlexComponentInterface{
-								&messaging_api.FlexImage{
-									Align:       "center",
-									AspectMode:  "cover",
-									AspectRatio: "1:1",
-									Gravity:     "center",
-									Url:         LogoImageUrl,
-								},
-							},
-						},
-						&messaging_api.FlexBox{
-							Layout: messaging_api.FlexBoxLAYOUT_VERTICAL,
-							Flex:   1,
-							Contents: []messaging_api.FlexComponentInterface{
-								&messaging_api.FlexFiller{},
-							},
-						},
-					},
-				},
-				&messaging_api.FlexBox{
-					BorderColor: "#6EC4C4",
-					BorderWidth: "1px",
-					Flex:        0,
-					Height:      "120px",
-					Layout:      messaging_api.FlexBoxLAYOUT_VERTICAL,
-					Contents: []messaging_api.FlexComponentInterface{
-						&messaging_api.FlexFiller{},
-					},
-				},
-				&messaging_api.FlexBox{
-					Flex:   3,
-					Layout: messaging_api.FlexBoxLAYOUT_VERTICAL,
-					Contents: []messaging_api.FlexComponentInterface{
-						&messaging_api.FlexBox{
-							Flex:   1,
-							Layout: messaging_api.FlexBoxLAYOUT_VERTICAL,
-							Contents: []messaging_api.FlexComponentInterface{
-								&messaging_api.FlexFiller{},
-							},
-						},
-						&messaging_api.FlexText{
-							Color:  "#6EC4C4",
-							Size:   "sm",
-							Text:   card.Company,
-							Weight: "bold",
-						},
-						&messaging_api.FlexText{
-							Color:  "#81C997",
-							Margin: "xxl",
-							Size:   "xxs",
-							Text:   card.Title,
-						},
-						&messaging_api.FlexText{
-							Color:  "#81C997",
-							Size:   "xl",
-							Text:   card.Name,
-							Weight: "bold",
-						},
-						&messaging_api.FlexText{
-							Text: card.Address,
-						},
-						&messaging_api.FlexText{
-							Text: card.Email,
-						},
-						&messaging_api.FlexText{
-							Text: card.Phone,
-						},
-					},
-				},
-			},
-		},
-	}
-}
-
 // SendFlexMsg: Send flex message to LINE server.
 func SendFlexMsg(replyToken string, people []Person, msg string) error {
 	var cards []messaging_api.FlexBubble
 	for _, card := range people {
-		cards = append(cards, getNewSingleCard(card))
+		cards = append(cards, getCardFlex(card))
 	}
 
 	contents := &messaging_api.FlexCarousel{
@@ -136,8 +38,8 @@ func SendFlexMsg(replyToken string, people []Person, msg string) error {
 	return nil
 }
 
-// getNewSingleCard: Send flex message to LINE server.
-func getNewSingleCard(card Person) messaging_api.FlexBubble {
+// getCardFlex: Send flex message to LINE server.
+func getCardFlex(card Person) messaging_api.FlexBubble {
 	// Get URL encode for company name and address
 	companyEncode := url.QueryEscape(card.Company)
 	addressEncode := url.QueryEscape(card.Address)

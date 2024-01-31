@@ -220,7 +220,6 @@ func (n *NotionDB) QueryDatabaseContains(query string) ([]Person, error) {
 	var combinedResult []Person
 
 	// 進行名稱查詢
-	log.Println("QueryDatabaseContainsByName", query, n.UID)
 	nameResult, err := n.QueryDatabaseContainsByName(query)
 	log.Println("QueryDatabaseContainsByName", nameResult, err)
 	if err != nil {
@@ -229,7 +228,6 @@ func (n *NotionDB) QueryDatabaseContains(query string) ([]Person, error) {
 	combinedResult = append(combinedResult, nameResult...)
 
 	// 進行電子郵件查詢
-	log.Println("QueryDatabaseContainsByEmail", query, n.UID)
 	emailResult, err := n.QueryDatabaseContainsByEmail(query)
 	log.Println("QueryDatabaseContainsByEmail", emailResult, err)
 	if err != nil {
@@ -238,7 +236,6 @@ func (n *NotionDB) QueryDatabaseContains(query string) ([]Person, error) {
 	combinedResult = append(combinedResult, emailResult...)
 
 	// 進行標題查詢
-	log.Println("QueryDatabaseContainsByTitle", query, n.UID)
 	titleResult, err := n.QueryDatabaseContainsByTitle(query)
 	log.Println("QueryDatabaseContainsByTitle", titleResult, err)
 	if err != nil {

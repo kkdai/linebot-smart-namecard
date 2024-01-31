@@ -13,9 +13,6 @@
     },
     {
       "url": "heroku/go"
-    },
-    {
-      "url": "https://github.com/gerywahyunugraha/heroku-google-application-credentials-buildpack"
     }
   ],
   "env": {
